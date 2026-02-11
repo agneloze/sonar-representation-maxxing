@@ -22,9 +22,11 @@ bg = pygame.transform.scale(bg, (600,600))
 
 obj = pygame.image.load("object1.png").convert_alpha()
 obj = pygame.transform.scale(obj, (50, 50))
+obj_rect = obj.get_rect(center=(300,300))
 
 spawn = pygame.image.load("spawn.png").convert_alpha()
 spawn = pygame.transform.scale(spawn, (25, 25))
+spawn_rect = spawn.get_rect()
 
 
 clock=pygame.time.Clock()
@@ -59,18 +61,16 @@ while running:
 
         if event.type == pygame.MOUSEBUTTONUP:
             summon = True
-            x = event.pos[0] -12
-            y = event.pos[1] -13
-            spawncoord= (x,y)
-            spawncenter= (x+13, y+13)
+            spawn_rect.center = event.pos
+            spawncenter= spawn_rect.center
             spawntime = pygame.time.get_ticks()
 
-    pygame.draw.circle(wave_surf, (0, 0, 0, 200), (300, 300), wave_radius, 5)
+    pygame.draw.circle(wave_surf, (0, 0, 0, 200), obj_rect.center, wave_radius, 5)
     
 
 
     screen.blit(bg, (0,0))
-    screen.blit(obj, (275,277))
+    screen.blit(obj, obj_rect)
     screen.blit(wave_surf, (0, 0))
 
     if inc==True:
@@ -104,27 +104,20 @@ while running:
 
 
     if summon == True:
-        screen.blit(spawn, (x+12,y+13))
+        screen.blit(spawn, (spawncenter))
         if pygame.time.get_ticks() - spawntime > 3000:
             summon = False
 
-        dist = math.hypot(spawncenter[0]-275, spawncenter[1]-277)
+        dist = math.hypot(spawncenter[0]-300, spawncenter[1]-300)
 
         if (dist-wave_radius)>1 and (dist-wave_radius) <5:
             current= pygame.time.get_ticks()/1000
             totaltime=current-circle_time_start
             
             echo_rad=0
-            pygame.draw.circle(echo_surf, (0, 0, 0, 150), spawncoord, echo_rad, 5)
+            pygame.draw.circle(echo_surf, (0, 0, 0, 150), spawncenter, echo_rad, 5)
 
-            echo_wave = True
-
-
-            dist = 1480 * current
-            final_dist= dist/2
-
-            print(f"time = {current}, speed of sound in water = 1480, dist = 1480 * current, so dist = {dist}\n so final {final_dist}")
-            
+            echo_wave = True            
 
         
 
@@ -137,7 +130,7 @@ while running:
     pygame.display.flip()
 
     
-    clock.tick(120)  # limits FPS to 60
+    clock.tick(60)  # limits FPS to 60
 
 
 pygame.quit()
