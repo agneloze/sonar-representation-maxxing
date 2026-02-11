@@ -62,7 +62,7 @@ while running:
             x = event.pos[0] -12
             y = event.pos[1] -13
             spawncoord= (x,y)
-            spawncenter= (x+12, y+13)
+            spawncenter= (x+23, y+23)
             spawntime = pygame.time.get_ticks()
 
     pygame.draw.circle(wave_surf, (0, 0, 0, 200), (300, 300), wave_radius, 5)
@@ -115,7 +115,8 @@ while running:
             current= pygame.time.get_ticks()/1000
             totaltime=current-circle_time_start
             
-            pygame.draw.circle(echo_surf, (0, 0, 0, 150), spawncenter, echo_rad, 5)
+            echo_rad=0
+            pygame.draw.circle(echo_surf, (0, 0, 0, 150), spawncoord, echo_rad, 5)
 
             echo_wave = True
 
