@@ -5,7 +5,6 @@ import math
 import time
 
 
-
 pygame.init()
 pygame.mixer.init()
 
@@ -77,9 +76,7 @@ unit = font.render("1px = 10m", True, (255, 255, 255))
 
 summon = False
 inc=True
-
-
-
+pausebool = False
 
 
 bgm.play(-1)
@@ -101,12 +98,18 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        if event.type == pygame.MOUSEBUTTONUP:
+        elif event.type == pygame.MOUSEBUTTONUP and not pausebool:
             summon = True
             click.play()
             spawn_rect.center = event.pos
             spawncenter= (spawn_rect.center[0]-12, spawn_rect.center[1]-12)
             spawntime = pygame.time.get_ticks()
+
+        elif event.type == pygame.KEYDOWN:
+            if (event.key == pygame.K_ESCAPE) and (not pausebool):
+                pausebool = True
+            elif (event.key == pygame.K_ESCAPE) and (pausebool):
+                pausebool = False
 
             
 
@@ -145,20 +148,20 @@ while running:
 
     
 
+    if not pausebool:
+        screen.blit(bg, (0,0))
+        screen.blit(obj, obj_rect)
+        screen.blit(wave_surf, (0, 0))
 
-    screen.blit(bg, (0,0))
-    screen.blit(obj, obj_rect)
-    screen.blit(wave_surf, (0, 0))
-
-    if inc==True:
+    if inc==True and not pausebool:
         wave_radius += wave_speed
 
 
-    elif inc==False:
+    elif inc==False and not pausebool:
         wave_radius -= wave_speed
 
     
-    if echo_wave==True:
+    if echo_wave==True and not pausebool:
         pygame.draw.circle(echo_surf, (0, 0, 0, 150), (spawncenter[0]+11, spawncenter[1]+11), echo_rad, 5)
     
         screen.blit(echo_surf, (0,0))
@@ -193,7 +196,7 @@ while running:
 
 
 
-    if summon == True:
+    if summon == True and not pausebool:
         screen.blit(spawn, (spawncenter))
 
         if pygame.time.get_ticks() - spawntime > 3000:
@@ -219,6 +222,7 @@ while running:
             hit_locked = True
             hit_lockedtil = pygame.time.get_ticks() + locked_ms  
 
+    
     score_overlay.blit(icon, (50, 545))
     score_overlay.blit(clock1, (345, 550))
     score_overlay.blit(unit, (35, 31))
@@ -228,11 +232,10 @@ while running:
         score_overlay.blit(text, (106, 557))
         score_overlay.blit(text2, (395, 557))
 
-    
-    screen.blit(score_overlay, (0,0))
+    if not pausebool:
+        screen.blit(score_overlay, (0,0))
 
     pygame.display.flip()
-
     
     clock.tick(60)  #FPS
 
